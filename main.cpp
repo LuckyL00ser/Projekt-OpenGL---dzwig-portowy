@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Model.h"
 #include "Crane.h"
+#include "WorldBar.h"
 #include "AntTweakBar\include\AntTweakBar.h"
 
 #include <math.h>
@@ -38,14 +39,19 @@ float lastFrame = 0.0f;
 Crane ourModel;
 float yWater;
 
-
-
+WorldBar otoczenie;
+TwBar* dzwigBar;
 
 float objectColor[] = { 1.0,1.0,1.0 };
 float lightColor[] = {1.0, 1.0, 1.0};
 float lightPos[] = { 1.0, 10.0, 1.0 };
 
-
+/*int pos[2], size[2];
+TwGetParam(bar, NULL, "size", TW_PARAM_INT32, 2, size);
+pos[0] = width - size[0] - 16;
+pos[1] = 16;
+TwSetParam(bar, NULL, "position", TW_PARAM_INT32, 2, pos);
+cout << "\nSzer: " << width << "\nWys: " << height << endl;*/
 
 inline void TwEventMouseButtonGLFW3(GLFWwindow* window, int button, int action, int mods) { TwEventMouseButtonGLFW(button, action); }
 
@@ -56,6 +62,12 @@ inline void TwEventMouseWheelGLFW3(GLFWwindow* window, double xoffset, double yo
 inline void TwEventKeyGLFW3(GLFWwindow* window, int key, int scancode, int action, int mods) { TwEventKeyGLFW(key, action); }
 
 inline void TwEventCharGLFW3(GLFWwindow* window, int codepoint) { TwEventCharGLFW(codepoint, GLFW_PRESS); }
+
+void TW_CALL cameraRun(void *clientData)
+{
+	(*(Camera*)clientData).LookingAround = !(*(Camera*)clientData).LookingAround;
+}
+
 int main()
 {
 	
@@ -114,20 +126,26 @@ int main()
 	
 	// render loop
 	// -----------
-	TwBar* bar;
-	TwInit(TW_OPENGL_CORE,NULL);
-	bar = TwNewBar("Dzwig portowy");
-	TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLFW and OpenGL.' "); // Message added to the help bar.
+	//TwBar* dzwigBar;
 	
-
-
+	TwInit(TW_OPENGL_CORE, NULL);
+	otoczenie.init(cameraRun, &camera);
+	dzwigBar = TwNewBar("dzwig");
+	TwDefine(" dzwig label='Parametry dzwigu' position='16 16' ");
 	
+	float rotationSpeedZ = 2.0;
+	float rotationSpeedX = 5.0;
+	float ropeSpeed = 0.5;
 	// Add 'time' to 'bar': it is a read-only (RO) variable of type TW_TYPE_DOUBLE, with 1 precision digit
-	TwAddVarRW(bar, "ropeLength", TW_TYPE_FLOAT, &ourModel.turret.ropeLength, " label='Dlugosc liny' min=0 max=10 precision=2  ");
-	TwAddVarRO(bar, "rotY", TW_TYPE_FLOAT, &ourModel.currentRotation, " label='Obrot dzwigu' precision=2  ");
-	TwAddVarRO(bar, "rotZ", TW_TYPE_FLOAT, &ourModel.angleX, " label='Pochylenie ramienia dzwigu' precision=2  ");
-	TwAddVarRW(bar, "lightPos", TW_TYPE_DIR3F, &lightPos, " label='Kierunek oswietlenia' ");
-	TwAddVarRW(bar, "lightColor", TW_TYPE_COLOR3F, &lightColor, " label='Kolor swiatla' ");
+	TwAddVarRW(dzwigBar, "ropeLength", TW_TYPE_FLOAT, &ourModel.turret.ropeLength, " label='Dlugosc liny' min=0 max=10 precision=2 group=Lina ");
+	TwAddVarRW(dzwigBar, "ropeSpeed", TW_TYPE_FLOAT, &ourModel.ropeSpeed, " label='Dlugosc liny' min=0.25 max=4.5 precision=2 step=0.1 keyincr=K keydecr=L group=Lina ");
+	TwAddVarRO(dzwigBar, "rotZ", TW_TYPE_FLOAT, &ourModel.currentRotation, " label='Obrot dzwigu' precision=2 group=Ramie ");
+	TwAddVarRW(dzwigBar, "speedRotZ", TW_TYPE_FLOAT, &ourModel.rotationSpeedZ, " label='Szybkosc obrotu ramienia' min=0.5 max=5 step=0.1 precision=2 keyincr=Z keydecr=X group=Ramie ");
+	TwAddVarRO(dzwigBar, "rotX", TW_TYPE_FLOAT, &ourModel.angleX, " label='Pochylenie ramienia dzwigu' precision=2 group=Ramie ");
+	TwAddVarRW(dzwigBar, "speedRotX", TW_TYPE_FLOAT, &ourModel.rotationSpeedX, " label='Szybkosc opuszczania ramienia' min=0.5 max=10 step=0.1 precision=2 keyincr=N keydecr=M group=Ramie ");
+	/*TwAddVarRW(swiatBar, "lightPos", TW_TYPE_DIR3F, &lightPos, " label='Kierunek oswietlenia' ");
+	TwAddVarRW(swiatBar, "lightColor", TW_TYPE_COLOR3F, &lightColor, " label='Kolor swiatla' ");
+	TwAddButton(swiatBar, "Kamera", cameraRun, &camera, " label='Wlaczenie kamery' key=SPACE ");*/
 	
 	TwWindowSize(1600, 900);
 	glfwSetMouseButtonCallback(window, (GLFWmousebuttonfun)TwEventMouseButtonGLFW3);	
@@ -195,7 +213,8 @@ int main()
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
-		TwRefreshBar(bar);
+		TwRefreshBar(dzwigBar);
+		otoczenie.refresh();
 		TwDraw();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -224,23 +243,20 @@ void processInput(GLFWwindow *window)
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
-		ourModel.rotateZ(2*deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-		ourModel.rotateZ(-2*deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
-		ourModel.rotateX(5* deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
-		ourModel.rotateX(-5*deltaTime);
-
-	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
-		ourModel.turret.extendRope(0.5*deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-		ourModel.turret.extendRope(-0.5*deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		camera.LookingAround = !camera.LookingAround;
-
-
+	if ((glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_RELEASE)&&(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)) {
+		if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+			ourModel.rotateZ(ourModel.rotationSpeedZ*deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+			ourModel.rotateZ(-ourModel.rotationSpeedZ*deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+			ourModel.rotateX(ourModel.rotationSpeedX* deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+			ourModel.rotateX(-ourModel.rotationSpeedX*deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+			ourModel.turret.extendRope(ourModel.ropeSpeed*deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+			ourModel.turret.extendRope(-ourModel.ropeSpeed*deltaTime);
+	}
 }
 
 
@@ -252,6 +268,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
 	TwWindowSize(width, height);
+	otoczenie.windowResize(width, height);
 }
 
 // glfw: whenever the mouse moves, this callback is called
@@ -271,7 +288,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	;
 	TwEventMousePosGLFW3(window,xpos, ypos);
 	camera.ProcessMouseMovement(xoffset, yoffset);
 }
