@@ -24,7 +24,7 @@ public:
 	void loadModel();
 	void rotate(float dAngle);
 	void extendRope(float dist);
-	void drawModel(glm::mat4 parentMatrix, Shader & shader);
+	void drawModel(glm::mat4 parentMatrix, Shader & shader,float objColor[3]);
 	glm::vec3 getOperatorPosition();
 	glm::mat4 getHookMatrix();
 	glm::vec3 hookPos;

@@ -21,7 +21,7 @@ void Model::loadModel(string path)
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
-		cout << "ERROR::ASSIMP::" << import.GetErrorString() << endl;
+		//cout << "ERROR::ASSIMP::" << import.GetErrorString() << endl;
 		return;
 	}
 	directory = path.substr(0, path.find_last_of('/'));
@@ -185,7 +185,7 @@ unsigned int TextureFromFile(const char *path, const string &directory, bool gam
 	}
 	else
 	{
-		std::cout << "Texture failed to load at path: " << path << std::endl;
+		//std::cout << "Texture failed to load at path: " << path << std::endl;
 		stbi_image_free(data);
 	}
 

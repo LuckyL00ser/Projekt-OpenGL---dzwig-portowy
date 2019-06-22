@@ -8,7 +8,7 @@
 #include "stb_image.h"
 #include "Shader.h"
 #include "Camera.h"
-#include <iostream>
+
 
 class Skybox
 {

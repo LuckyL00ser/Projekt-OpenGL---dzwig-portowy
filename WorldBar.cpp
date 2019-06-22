@@ -1,5 +1,5 @@
 #include "WorldBar.h"
-#include <iostream>
+
 
 WorldBar::WorldBar()
 {

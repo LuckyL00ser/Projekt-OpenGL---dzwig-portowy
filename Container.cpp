@@ -13,7 +13,7 @@ bool Container::adjustable(glm::vec3 hookPosition)
 	
 	}
 	alreadyAdjusted = false;
-	std::cout << abs(glm::distance(position, hookPosition)) << std::endl;
+	//std::cout << abs(glm::distance(position, hookPosition)) << std::endl;
 		return false;
 }
 

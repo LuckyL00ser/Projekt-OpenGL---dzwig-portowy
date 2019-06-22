@@ -15,7 +15,7 @@
 #include <GLFW/glfw3.h>
 #include <GL/glew.h>
 #include <string>
-#include <iostream>
+
 #include <filesystem>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -89,7 +89,7 @@ bool showCursorPressed = false;
 bool showCursor = false;
 bool release = false;
 
-int main()
+int WinMain()
 {
 	
 	// glfw: initialize and configure
@@ -104,10 +104,10 @@ int main()
 
 	// glfw window creation
 	// --------------------
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Grafika komputerowa - dzwig portowy", NULL, NULL);
 	if (window == NULL)
 	{
-		std::cout << "Failed to create GLFW window" << std::endl;
+		//std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
@@ -169,7 +169,7 @@ int main()
 	// Add 'time' to 'bar': it is a read-only (RO) variable of type TW_TYPE_DOUBLE, with 1 precision digit
 
 	TwAddVarRW(dzwigBar, "ropeLength", TW_TYPE_FLOAT, &crane.turret.ropeLength, " label='Dlugosc liny' min=0 max=10 precision=2 group=Lina ");
-	TwAddVarRW(dzwigBar, "ropeSpeed", TW_TYPE_FLOAT, &crane.ropeSpeed, " label='Prêdkoœæ wysuwania liny' min=0.25 max=4.5 precision=2 step=0.1 keyincr=K keydecr=L group=Lina ");
+	TwAddVarRW(dzwigBar, "ropeSpeed", TW_TYPE_FLOAT, &crane.ropeSpeed, " label='Predkosc wysuwania liny' min=0.25 max=4.5 precision=2 step=0.1 keyincr=K keydecr=L group=Lina ");
 	TwAddVarRO(dzwigBar, "rotZ", TW_TYPE_FLOAT, &crane.currentRotation, " label='Obrot dzwigu' precision=2 group=Ramie ");
 	TwAddVarRW(dzwigBar, "speedRotZ", TW_TYPE_FLOAT, &crane.rotationSpeedZ, " label='Szybkosc obrotu ramienia' min=0.5 max=15 step=0.1 precision=2 keyincr=Z keydecr=X group=Ramie ");
 	TwAddVarRO(dzwigBar, "rotX", TW_TYPE_FLOAT, &crane.angleX, " label='Pochylenie ramienia dzwigu' precision=2 group=Ramie ");
@@ -221,7 +221,7 @@ int main()
 		ourShader.setMat4("view", view);
 
 		// render the loaded model
-		crane.drawModel(ourShader);
+		crane.drawModel(ourShader,objectColor);
 
 		glm::mat4 containersMatrix = glm::mat4(1.0f);
 		containersMatrix = glm::translate(containersMatrix, glm::vec3(0.0f, -1.6f, 1.5f));

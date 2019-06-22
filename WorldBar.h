@@ -1,7 +1,7 @@
 #pragma once
 #include "AntTweakBar/include/AntTweakBar.h"
 #include "Camera.h"
-#include <iostream>
+
 
 extern float lightColor[];
 extern float lightPos[];

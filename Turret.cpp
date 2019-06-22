@@ -37,7 +37,7 @@ void Turret::extendRope(float dist)
 
 
 
-void Turret::drawModel(glm::mat4 parentMatrix,Shader & shader)
+void Turret::drawModel(glm::mat4 parentMatrix,Shader & shader, float objColor[3])
 {	
 	
 	
@@ -72,7 +72,8 @@ void Turret::drawModel(glm::mat4 parentMatrix,Shader & shader)
 		adjustedContainer->mat = hookM;
 		adjustedContainer->move(glm::vec3(0, 0, 0));
 	}
-
+	shader.setVec3("objectColor", 0,0,0); 
+	
 	//liny od haka
 	shader.setMat4("model", glm::translate(parentMatrix, glm::vec3(x, y, -0.1)));
 	line.setStart(glm::vec3(0,-ropeLength-0.2,-0.05));
@@ -82,13 +83,15 @@ void Turret::drawModel(glm::mat4 parentMatrix,Shader & shader)
 	line.draw();
 	hookM = glm::translate(parentMatrix, glm::vec3(x, y - ropeLength - 1.5, 0));
 
+	shader.setVec3("objectColor", objColor[0],objColor[1],objColor[2]);
+
 	glm::mat4 old = glm::translate(parentMatrix, glm::vec3(-0.4, 3.28, 0.052));
 	parentMatrix = glm::rotate(parentMatrix, rotation*3.1415f / 180.f, glm::vec3(0, 0, 1));
 	shader.setMat4("model", parentMatrix);
 	arm.Draw(shader);
 
 
-
+	shader.setVec3("objectColor", 0, 0, 0);
 	//rysowanie lin - jakaœ masakra
 
 	shader.setMat4("model", old);
@@ -109,7 +112,7 @@ void Turret::drawModel(glm::mat4 parentMatrix,Shader & shader)
 	//shader.setMat4("model", old);
 	//line.setStart(glm::vec3( 9.1*cos(rotation*3.1415f / 180.f), 10*sin(rotation*3.1415f / 180.f) - 2.6, 0));
 	//line.draw();
-
+	shader.setVec3("objectColor", objColor[0], objColor[1], objColor[2]);
 }
 
 glm::vec3 Turret::getOperatorPosition()
