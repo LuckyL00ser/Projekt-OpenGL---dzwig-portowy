@@ -30,14 +30,13 @@
     <ClCompile Include="Turret.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-
     <ClCompile Include="Line.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Skybox.cpp">
-
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="WorldBar.cpp">
-
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -66,18 +65,15 @@
     <ClInclude Include="Turret.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-
     <ClInclude Include="Line.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Skybox.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-
     <ClInclude Include="WorldBar.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
-
   </ItemGroup>
   <ItemGroup>
     <None Include="vertexShader.glsl">

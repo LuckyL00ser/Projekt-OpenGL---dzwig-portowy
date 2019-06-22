@@ -15,12 +15,12 @@ Skybox::Skybox()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 	
-	textures_faces.push_back("./skybox_textures/front.tga");
-	textures_faces.push_back("./skybox_textures/back.tga");
-	textures_faces.push_back("./skybox_textures/top.tga");
-	textures_faces.push_back("./skybox_textures/bottom.tga");
-	textures_faces.push_back("./skybox_textures/right.tga");
-	textures_faces.push_back("./skybox_textures/left.tga");
+	textures_faces.push_back("./skybox_textures/right.jpg");//front
+	textures_faces.push_back("./skybox_textures/left.jpg");//back
+	textures_faces.push_back("./skybox_textures/top.jpg");
+	textures_faces.push_back("./skybox_textures/bottom.jpg");
+	textures_faces.push_back("./skybox_textures/front.jpg");//right
+	textures_faces.push_back("./skybox_textures/back.jpg");//left
 	
 	textureID = loadCubemap(textures_faces);
 	skyboxShader = new Shader("cubemap.vs", "cubemap.fs");

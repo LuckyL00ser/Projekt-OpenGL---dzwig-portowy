@@ -39,6 +39,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 Crane crane;
+
 float yWater;
 
 WorldBar otoczenie;
@@ -145,7 +146,7 @@ int main()
 	// Add 'time' to 'bar': it is a read-only (RO) variable of type TW_TYPE_DOUBLE, with 1 precision digit
 
 	TwAddVarRW(dzwigBar, "ropeLength", TW_TYPE_FLOAT, &crane.turret.ropeLength, " label='Dlugosc liny' min=0 max=10 precision=2 group=Lina ");
-	TwAddVarRW(dzwigBar, "ropeSpeed", TW_TYPE_FLOAT, &crane.ropeSpeed, " label='Dlugosc liny' min=0.25 max=4.5 precision=2 step=0.1 keyincr=K keydecr=L group=Lina ");
+	TwAddVarRW(dzwigBar, "ropeSpeed", TW_TYPE_FLOAT, &crane.ropeSpeed, " label='Prêdkoœæ wysuwania liny' min=0.25 max=4.5 precision=2 step=0.1 keyincr=K keydecr=L group=Lina ");
 	TwAddVarRO(dzwigBar, "rotZ", TW_TYPE_FLOAT, &crane.currentRotation, " label='Obrot dzwigu' precision=2 group=Ramie ");
 	TwAddVarRW(dzwigBar, "speedRotZ", TW_TYPE_FLOAT, &crane.rotationSpeedZ, " label='Szybkosc obrotu ramienia' min=0.5 max=5 step=0.1 precision=2 keyincr=Z keydecr=X group=Ramie ");
 	TwAddVarRO(dzwigBar, "rotX", TW_TYPE_FLOAT, &crane.angleX, " label='Pochylenie ramienia dzwigu' precision=2 group=Ramie ");
@@ -218,7 +219,7 @@ int main()
 		hookMatrix = glm::scale(hookMatrix, glm::vec3(0.2f, 0.2f, 0.2f));
 		ourShader.setMat4("model", hookMatrix);
 		
-	//	skybox.drawSkybox(camera, projection);
+		skybox.drawSkybox(camera, projection);
 		
 		
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
