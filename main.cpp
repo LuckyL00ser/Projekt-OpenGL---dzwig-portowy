@@ -8,6 +8,7 @@
 #include "Model.h"
 #include "Crane.h"
 #include "AntTweakBar\include\AntTweakBar.h"
+#include "Skybox.h"
 
 #include <math.h>
 #include <GLFW/glfw3.h>
@@ -35,7 +36,8 @@ bool firstMouse = true;
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-Crane ourModel;
+
+Crane crane;
 float yWater;
 
 
@@ -62,6 +64,7 @@ int main()
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
+	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -83,7 +86,7 @@ int main()
 	glfwSetScrollCallback(window, scroll_callback);
 	
 	// tell GLFW to capture our mouse
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	if (glewInit() != GLEW_OK)
 		throw std::runtime_error("glewInit failed");
 	// glad: load all OpenGL function pointers
@@ -97,20 +100,21 @@ int main()
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
-
+	
 	// build and compile shaders
 	// -------------------------
 	Shader ourShader("vertexShader.vs", "fragmentShader.fs");
 	
 	// load models
 	// -----------
-	ourModel.load();
+	crane.load();
 	Model containers("./crane/containers.obj");
 	Model ground("./crane/ground.obj");
 	Model water("./crane/water.obj");
+	Skybox skybox;
 	
-	// draw in wireframe
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	
 	
 	// render loop
 	// -----------
@@ -119,13 +123,11 @@ int main()
 	bar = TwNewBar("Dzwig portowy");
 	TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLFW and OpenGL.' "); // Message added to the help bar.
 	
-
-
 	
 	// Add 'time' to 'bar': it is a read-only (RO) variable of type TW_TYPE_DOUBLE, with 1 precision digit
-	TwAddVarRW(bar, "ropeLength", TW_TYPE_FLOAT, &ourModel.turret.ropeLength, " label='Dlugosc liny' min=0 max=10 precision=2  ");
-	TwAddVarRO(bar, "rotY", TW_TYPE_FLOAT, &ourModel.currentRotation, " label='Obrot dzwigu' precision=2  ");
-	TwAddVarRO(bar, "rotZ", TW_TYPE_FLOAT, &ourModel.angleX, " label='Pochylenie ramienia dzwigu' precision=2  ");
+	TwAddVarRW(bar, "ropeLength", TW_TYPE_FLOAT, &crane.turret.ropeLength, " label='Dlugosc liny' min=0 max=10 precision=2  ");
+	TwAddVarRO(bar, "rotY", TW_TYPE_FLOAT, &crane.currentRotation, " label='Obrot dzwigu' precision=2  ");
+	TwAddVarRO(bar, "rotZ", TW_TYPE_FLOAT, &crane.angleX, " label='Pochylenie ramienia dzwigu' precision=2  ");
 	TwAddVarRW(bar, "lightPos", TW_TYPE_DIR3F, &lightPos, " label='Kierunek oswietlenia' ");
 	TwAddVarRW(bar, "lightColor", TW_TYPE_COLOR3F, &lightColor, " label='Kolor swiatla' ");
 	
@@ -150,9 +152,10 @@ int main()
 
 		// render
 		// ------
-		glClearColor(0.05f, 0.05f, 0.20f, 1.0f);
+		glClearColor(0.2f, 0.2f, 0.20f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		
+		
 		// don't forget to enable shader before setting uniforms
 		ourShader.use();
 		ourShader.setVec3("objectColor", objectColor[0],objectColor[1],objectColor[2]);
@@ -165,7 +168,7 @@ int main()
 		ourShader.setMat4("view", view);
 
 		// render the loaded model
-		ourModel.drawModel(ourShader);
+		crane.drawModel(ourShader);
 
 		glm::mat4 containersMatrix = glm::mat4(1.0f);
 		containersMatrix = glm::translate(containersMatrix, glm::vec3(0.0f, -1.6f, 1.5f));
@@ -192,11 +195,17 @@ int main()
 		hookMatrix = glm::scale(hookMatrix, glm::vec3(0.2f, 0.2f, 0.2f));
 		ourShader.setMat4("model", hookMatrix);
 		
-
+	//	skybox.drawSkybox(camera, projection);
+		
+		
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
+		
+	
+
 		TwRefreshBar(bar);
 		TwDraw();
+		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 		
@@ -224,21 +233,24 @@ void processInput(GLFWwindow *window)
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+
 	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
-		ourModel.rotateZ(2*deltaTime);
+		crane.rotateZ(15*deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-		ourModel.rotateZ(-2*deltaTime);
+		crane.rotateZ(-15*deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
-		ourModel.rotateX(5* deltaTime);
+		crane.rotateX(8* deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
-		ourModel.rotateX(-5*deltaTime);
+		crane.rotateX(-8*deltaTime);
 
 	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
-		ourModel.turret.extendRope(0.5*deltaTime);
+		crane.turret.extendRope(0.5*deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-		ourModel.turret.extendRope(-0.5*deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		crane.turret.extendRope(-0.5*deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 		camera.LookingAround = !camera.LookingAround;
+		glfwSetInputMode(window, GLFW_CURSOR, camera.LookingAround? GLFW_CURSOR_DISABLED: GLFW_CURSOR_NORMAL);
+	}
 
 
 }
@@ -250,6 +262,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
+	
 	glViewport(0, 0, width, height);
 	TwWindowSize(width, height);
 }
@@ -271,7 +284,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	;
 	TwEventMousePosGLFW3(window,xpos, ypos);
 	camera.ProcessMouseMovement(xoffset, yoffset);
 }

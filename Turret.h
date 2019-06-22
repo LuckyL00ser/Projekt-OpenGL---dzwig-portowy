@@ -2,6 +2,9 @@
 #include "Model.h"
 #include "gtx/matrix_decompose.hpp"
 #include <math.h>
+#include "Line.h"
+#include "Math.h"
+
 class Turret :
 	public Model
 {
@@ -9,7 +12,7 @@ class Turret :
 	Model arm;
 	Model hook;
 	float hookDistance=10;
-	
+	Line line;
 public:
 	Turret();
 	~Turret();

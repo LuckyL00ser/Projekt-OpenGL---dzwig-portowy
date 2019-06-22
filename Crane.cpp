@@ -9,6 +9,7 @@ void Crane::load()
 {
 	base.loadModel("./crane/crane.obj");
 	turret.loadModel();
+
 }
 
 Crane::~Crane()
@@ -40,5 +41,7 @@ void Crane::drawModel(Shader& ourShader)
 
 	crane = glm::rotate(crane, currentRotation*3.1415f/180.0f, glm::vec3(0, 1, 0));
 	turret.drawModel(crane, ourShader);
+
+
 
 }
