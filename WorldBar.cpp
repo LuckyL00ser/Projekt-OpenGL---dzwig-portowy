@@ -38,5 +38,5 @@ void WorldBar::createBar(TwButtonCallback callback, void *camera)
 	TwDefine(" otoczenie label='Parametry otoczenia' position='1384 16' ");
 	TwAddVarRW(swiatBar, "lightPos", TW_TYPE_DIR3F, &lightPos, " label='Kierunek oswietlenia' ");
 	TwAddVarRW(swiatBar, "lightColor", TW_TYPE_COLOR3F, &lightColor, " label='Kolor swiatla' ");
-	TwAddButton(swiatBar, "Kamera", callback, camera, " label='Wlaczenie kamery' key=SPACE ");
+	TwAddButton(swiatBar, "Kamera", callback, camera, " label='Wlaczenie kamery' key=C ");
 }
