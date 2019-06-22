@@ -141,6 +141,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Turret.cpp" />
+    <ClCompile Include="WorldBar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -153,6 +154,7 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="structs.hpp" />
     <ClInclude Include="Turret.h" />
+    <ClInclude Include="WorldBar.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragmentShader.glsl" />
